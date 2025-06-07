@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Data.SqlClient;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -47,11 +48,27 @@ namespace DataAccess.DAO
         }
 
         // Paso 4: Crear un método para ejecutar Store Procedures
-        public void ExecuteStoredProcedure(SqlOperation operation)
+        public void ExecuteProcedure(SqlOperation sqlOperation)
         {
-  
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                using (var command = new SqlCommand(sqlOperation.ProcedureName, conn))
+                {
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
 
+                    // Set de los parametros
+                    foreach (var param in sqlOperation.Parameters)
+                    {
+                        command.Parameters.Add(param);
+                    }
+
+                    // Ejecuta el SP
+                    conn.Open();
+                    command.ExecuteNonQuery();
+                }
+            }
         }
+
 
         //Metodo para la ejecuacion Store Procedures con retorno de datos
         public List<Dictionary<string, object>> ExecuteQueryProcedure(SqlOperation operation)
@@ -64,4 +81,5 @@ namespace DataAccess.DAO
             return list;
 
         }
+    }
 }
