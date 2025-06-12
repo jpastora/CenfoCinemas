@@ -21,6 +21,20 @@ public class Program
 
         Console.WriteLine("Procedure executed successfully.");
 
+        var sqlOperation2 = new SqlOperation();
+        sqlOperation2.ProcedureName = "CRE_MOVIE_PR";
+        sqlOperation2.AddStringParameter("P_Title", "Inception");
+        sqlOperation2.AddStringParameter("P_Description", "A mind-bending thriller about dreams within dreams.");
+        sqlOperation2.AddDateTimeParam("P_ReleaseDate", new DateTime(2010, 7, 16));
+        sqlOperation2.AddStringParameter("P_Genre", "Sci-Fi");
+        sqlOperation2.AddStringParameter("P_Director", "Christopher Nolan");
+
+        var sqlDao2 = SqlDao.GetInstance();
+
+        sqlDao2.ExecuteProcedure(sqlOperation2);
+
+        Console.WriteLine("Movie created successfully.");
+
     }
 
 }
