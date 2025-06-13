@@ -5,7 +5,7 @@ public class Program
     public static void Main(string[] args)
     {
         var sqlOperation = new SqlOperation();
-        sqlOperation.ProcedureName = "CRE_USER_PR";
+        sqlOperation.ProcedureName = "SP_CreateUser";
 
         sqlOperation.AddStringParameter("P_UserCode", "testUser");
         sqlOperation.AddStringParameter("P_Name", "Joseph");
@@ -22,7 +22,7 @@ public class Program
         Console.WriteLine("Procedure executed successfully.");
 
         var sqlOperation2 = new SqlOperation();
-        sqlOperation2.ProcedureName = "CRE_MOVIE_PR";
+        sqlOperation2.ProcedureName = "SP_CreateMovie";
         sqlOperation2.AddStringParameter("P_Title", "Inception");
         sqlOperation2.AddStringParameter("P_Description", "A mind-bending thriller about dreams within dreams.");
         sqlOperation2.AddDateTimeParam("P_ReleaseDate", new DateTime(2010, 7, 16));
