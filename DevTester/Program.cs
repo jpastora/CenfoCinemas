@@ -1,4 +1,5 @@
-﻿using DataAccess.CRUD;
+﻿using CoreApp;
+using DataAccess.CRUD;
 using DataAccess.DAO;
 using DTOs;
 using Newtonsoft.Json;
@@ -24,8 +25,8 @@ public class Program
                 Console.WriteLine("1. Crear");
                 Console.WriteLine("2. Actualizar");
                 Console.WriteLine("3. Listar");
-                Console.WriteLine("3. Eliminar");
-                Console.WriteLine("4. Salir");
+                Console.WriteLine("4. Eliminar");
+                Console.WriteLine("5. Salir");
 
                 var userOption = Console.ReadLine(); 
 
@@ -56,7 +57,45 @@ public class Program
                 }
                 break;
             case "2":
-                CreateMovie();
+
+                Console.WriteLine("Seleccione la operación a realizar con la película");
+                Console.WriteLine("1. Crear");
+                Console.WriteLine("2. Actualizar");
+                Console.WriteLine("3. Listar");
+                Console.WriteLine("4. Eliminar");
+                Console.WriteLine("5. Salir");
+
+                var movieOption = Console.ReadLine();
+
+                switch (movieOption)
+                {
+                    case "1":
+                        Console.WriteLine("Crear");
+                        CreateMovie();
+                        break;
+                    case "2":
+                        Console.WriteLine("Actualizar");
+                        // UpdateMovie(); // Implementar método si es necesario
+                        break;
+                    case "3":
+                        Console.WriteLine("Listar");
+                        ListMovies();
+                        break;
+                    case "4":
+                        Console.WriteLine("Eliminar");
+                        // DeleteMovie(); // Implementar método si es necesario
+                        break;
+                    case "5":
+                        Console.WriteLine("Saliendo del menú de película...");
+                        break;
+                    default:
+                        Console.WriteLine("Opción no válida. Intente de nuevo.");
+                        break;
+                }
+
+
+
+
                 break;
 
             case "3":
@@ -104,8 +143,8 @@ public class Program
                 BirthDate = birthDate
             };
 
-            var uCrud = new UserCrudFactory();
-            uCrud.Create(user);
+            var um = new UserManager();
+            um.Create(user);
 
             Console.WriteLine("Usuario creado exitosamente.");
         }
@@ -133,29 +172,22 @@ public class Program
             var genre = Console.ReadLine();
             Console.Write("Ingrese el director: ");
             var director = Console.ReadLine();
-            // Crear y ejecutar la operacion SQL
-            var sqlOperation = new SqlOperation
+
+            // Creaamos el objeto del usuario apartir de los datos ingresados
+            
+            var movie = new Movie()
             {
-                ProcedureName = "CRE_MOVIE_PR"
+                Title = title,
+                Description = description,
+                ReleaseDate = releaseDate,
+                Genre = genre,
+                Director = director
             };
 
-            sqlOperation.AddStringParameter("P_Title", title);
-            sqlOperation.AddStringParameter("P_Description", description);
-            sqlOperation.AddDateTimeParam("P_ReleaseDate", releaseDate);
-            sqlOperation.AddStringParameter("P_Genre", genre);
-            sqlOperation.AddStringParameter("P_Director", director);
+            var mm = new MovieManager();
+            mm.Create(movie);
 
-            var sqlDao = SqlDao.GetInstance();
-
-            try
-            {
-                sqlDao.ExecuteProcedure(sqlOperation);
-                Console.WriteLine("Pelicula creada exitosamente.");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al crear pelicula: {ex.Message}");
-            }
+            Console.WriteLine("Pelicula creada exitosamente.");
         }
 
         // Actualizar usuario por id
@@ -220,7 +252,18 @@ public class Program
                 Console.WriteLine(JsonConvert.SerializeObject(user));
             }
         }
-        
+
+        // Listar peliculas
+        void ListMovies()
+        {
+            var mCrud = new MovieCrudFactory();
+            var listMovies = mCrud.RetrieveAll<Movie>();
+            foreach (var movie in listMovies)
+            {
+                Console.WriteLine(JsonConvert.SerializeObject(movie));
+            }
+        }
+
         // Eliminar usuario
         void DeleteUser()
         {
