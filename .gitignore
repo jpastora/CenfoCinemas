@@ -361,5 +361,3 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/CoreApp/SendGridService.cs
-/CoreApp/SendGridService.cs
