@@ -10,7 +10,7 @@ namespace CoreApp
 {
     public class SendGridService
     {
-        private readonly string _apiKey = "";
+        private readonly string _apiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
         private readonly string _fromEmail = "joseph.pastora@gmail.com";
         private readonly string _fromName = "CenfoCinemas";
 
