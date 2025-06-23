@@ -2,6 +2,7 @@
 using DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq.Expressions;
 
 namespace WebAPI.Controllers
 {
@@ -76,8 +77,13 @@ namespace WebAPI.Controllers
             try
             {
                 var mm = new MovieManager();
-                mm.Delete(id);
-                return Ok("Pelicula eliminada correctamente.");
+                var movie = mm.RetrieveById(id);
+                if (movie != null)
+                {
+                    mm.Delete(movie);
+                    return Ok(movie);
+                }
+                return NotFound();
             }
             catch (Exception ex)
             {
