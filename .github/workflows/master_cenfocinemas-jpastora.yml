@@ -24,7 +24,7 @@ jobs:
           dotnet-version: '8.x'
 
       - name: Build WEB API
-        run: dotnet build ./WebAPI/WebAPI.csproj -configuration Debug
+        run: dotnet build ./WebAPI/WebAPI.csproj --configuration Debug
 
       - name: dotnet publish WEB API
         run: dotnet publish ./WebAPI/WebAPI.csproj -c Debug -o "${env.DOTNET_ROOT}/myapp"
