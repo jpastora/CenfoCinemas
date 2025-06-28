@@ -72,18 +72,13 @@ namespace WebAPI.Controllers
         }
         [HttpDelete]
         [Route("Delete")]
-        public ActionResult Delete(int id)
+        public ActionResult Delete(Movie movie)
         {
             try
             {
                 var mm = new MovieManager();
-                var movie = mm.RetrieveById(id);
-                if (movie != null)
-                {
-                    mm.Delete(movie);
-                    return Ok(movie);
-                }
-                return NotFound();
+                mm.Delete(movie);
+                return Ok($"Movie with ID {movie.Id} deleted successfully.");
             }
             catch (Exception ex)
             {

@@ -51,7 +51,6 @@ function UsersViewController() {
     "created": "2025-06-13T02:35:18.02",
     "updated": "0001-01-01T00:00:00"
   }
-
                 <th>ID</th>
                 <th>User Code</th>
                 <th>Name</th>

@@ -25,9 +25,43 @@
                     </tr>
                 </thead>
             </table>
-
         </div>
-
     </div>
-
+    <div class="row">
+        <div class="col-lg-6">
+            <form>
+                <fieldset>
+                    <legend>Movie form</legend>
+                    <div class="form-group">
+                        <label for="txtId" class="form-label mt-4">Movie Id</label>
+                        <input readonly type="number" id="txtId" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="txtTitle" class="form-label mt-4">Movie Title</label>
+                        <input type="text" id="txtTitle" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="txtDescription" class="form-label mt-4">Movie Description</label>
+                        <textarea id="txtDescription" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group"
+                        <label for="txtReleaseDate" class="form-label mt-4">Release Date</label>
+                        <input type="date" id="txtReleaseDate" class="form-control" />
+                        </div>
+                    <div class="form-group">
+                        <label for="txtGenre" class="form-label mt-4">Genre</label>
+                        <input type="text" id="txtGenre" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="txtDirector" class="form-label mt-4">Director</label>
+                        <input type="text" id="txtDirector" class="form-control" /> 
+                    </div>
+                </fieldset>
+            </form>
+            <br/>
+            <button id="btnCreate" class="source-button btn btn-primary btn-xs" type="button">Save</button>
+            <button id="btnUpdate" class="source-button btn btn-info btn-xs" type="button">Update</button>
+            <button id="btnDelete" class="source-button btn btn-danger btn-xs" type="button">Delete</button>
+        </div>
+    </div>
 </div>
