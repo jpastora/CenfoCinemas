@@ -1,7 +1,7 @@
 ﻿function MoviesViewController() {
 
     this.ViewName = "Movies";
-    this.ApiEndpoint = "Movie";
+    this.ApiEndpointName = "Movie";
 
     //Metodo constructor
     this.InitView = function () {
@@ -18,7 +18,7 @@
         //'https://localhost:7265/api/Movie/RetrieveAll'
 
         var ca = new ControlActions();
-        var service = this.ApiEndpoint + "/RetrieveAll";
+        var service = this.ApiEndpointName + "/RetrieveAll";
         var urlService = ca.GetUrlApiService(service);
 
         /*  {

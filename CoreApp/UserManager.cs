@@ -41,8 +41,8 @@ namespace CoreApp
                             if(uExist == null)
                                 uCrud.Create(user);
 
-                            var emailService = new SendGridService();
-                            emailService.SendWelcomeEmail(user.Email, user.Name).Wait();
+                           // var emailService = new SendGridService();
+                           // emailService.SendWelcomeEmail(user.Email, user.Name).Wait();
 
                         }
                         else

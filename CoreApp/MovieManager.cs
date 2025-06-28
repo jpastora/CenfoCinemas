@@ -32,7 +32,7 @@ namespace CoreApp
                     // Inicializar el servicio de correos
                     var emailService = new SendGridService();
 
-                    foreach (var user in usuarios)
+ /*                   foreach (var user in usuarios)
                     {
                         emailService.SendNewMovieNotification(
                             toEmail: user.Email,
@@ -41,7 +41,7 @@ namespace CoreApp
                             genre: movie.Genre,
                             releaseDate: movie.ReleaseDate
                         ).Wait();
-                    }
+                    }*/
                 }
                 else
                 {
