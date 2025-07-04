@@ -2,43 +2,35 @@ name: Build and Deploy ASP.Net Core apps to Azure
 
 on:
   push:
-    branches:
-      - master
+    branches: [ master ]
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: windows-latest
-    permissions:
-      contents: read
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup .NET 8.x
         uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.x'
+        with: dotnet-version: '8.x'
 
-      - name: Restore, build & publish WebAPI
+      - name: Restore & publish WebAPI
         run: |
           dotnet restore WebAPI/WebAPI.csproj
           dotnet publish WebAPI/WebAPI.csproj -c Release -o publish/api
 
-      - name: Restore, build & publish WebApp
+      - name: Restore & publish WebApp
         run: |
           dotnet restore WebApp/WebApp.csproj
           dotnet publish WebApp/WebApp.csproj -c Release -o publish/webapp
 
-      - name: Upload WebAPI artifact
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: api-artifact
           path: publish/api
-
-      - name: Upload WebApp artifact
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: webapp-artifact
           path: publish/webapp
@@ -46,40 +38,31 @@ jobs:
   deploy:
     runs-on: windows-latest
     needs: build
-    permissions:
-      id-token: write
-      contents: read
-
     steps:
-      - name: Download WebAPI artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: api-artifact
-          path: publish/api
-
-      - name: Download WebApp artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: webapp-artifact
-          path: publish/webapp
+      - uses: actions/download-artifact@v4
+        with: name: api-artifact; path: publish/api
+      - uses: actions/download-artifact@v4
+        with: name: webapp-artifact; path: publish/webapp
 
       - name: Azure Login
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_C3DA96A9F73A43FC905DA70EC408261A }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_47C25DA6CEB1427A8FBE3F9A27688994 }}
+          client-id:     ${{ secrets.AZUREAPPSERVICE_CLIENTID_C3DA96A9F73A43FC905DA70EC408261A }}
+          tenant-id:     ${{ secrets.AZUREAPPSERVICE_TENANTID_47C25DA6CEB1427A8FBE3F9A27688994 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_2DD758E6C6FE4EDA86F1B4A5001E5CD5 }}
 
-      - name: Deploy WebAPI to Azure
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: cenfocinemas-jpastora
-          slot-name: Production
-          package: publish/api
+      - name: Deploy WebAPI via CLI
+        run: |
+          az webapp deploy \
+            --resource-group CENFOTEC \
+            --name cenfocinemas-jpastora \
+            --src-path publish/api \
+            --type zip
 
-      - name: Deploy WebApp to Azure
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: cenfocinemas-jpastora-webapp
-          slot-name: Production
-          package: publish/webapp
+      - name: Deploy WebApp via CLI
+        run: |
+          az webapp deploy \
+            --resource-group CENFOTEC \
+            --name cenfocinemas-jpastora-webapp \
+            --src-path publish/webapp \
+            --type zip
