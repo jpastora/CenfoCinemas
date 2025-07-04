@@ -8,11 +8,14 @@ on:
       - master
   workflow_dispatch:
 
+env:
+  DOTNET_ROOT: C:\Program Files\dotnet
+
 jobs:
   build:
     runs-on: windows-latest
     permissions:
-      contents: read # required for actions/checkout
+      contents: read
 
     steps:
       - name: Checkout repository
@@ -27,14 +30,14 @@ jobs:
       - name: Build WEB API
         run: dotnet build ./WebAPI/WebAPI.csproj --configuration Debug
 
-      - name: dotnet publish WEB API
+      - name: Publish WEB API
         run: dotnet publish ./WebAPI/WebAPI.csproj -c Debug -o "${{ env.DOTNET_ROOT }}/myapp"
 
       # --- WEB APP ---
       - name: Build WebApp
         run: dotnet build ./WebApp/WebApp.csproj --configuration Debug
 
-      - name: dotnet publish WebApp
+      - name: Publish WebApp
         run: dotnet publish ./WebApp/WebApp.csproj -c Debug -o "${{ env.DOTNET_ROOT }}/myapp-webapp"
 
       # --- Upload artifacts ---
@@ -54,7 +57,7 @@ jobs:
     runs-on: windows-latest
     needs: build
     permissions:
-      id-token: write  # required for azure/login
+      id-token: write
       contents: read
 
     steps:
@@ -73,20 +76,22 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id:       ${{ secrets.AZUREAPPSERVICE_CLIENTID_C3DA96A9F73A43FC905DA70EC408261A }}
-          tenant-id:       ${{ secrets.AZUREAPPSERVICE_TENANTID_47C25DA6CEB1427A8FBE3F9A27688994 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_2DD758E6C6FE4EDA86F1B4A5001E5CD5 }}
+          client-id:       ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
+          tenant-id:       ${{ secrets.AZUREAPPSERVICE_TENANTID }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
 
       - name: Deploy WEB API to Azure
         uses: azure/webapps-deploy@v3
         with:
-          app-name:   'cenfocinemas-jpastora'
-          slot-name:  'Production'
-          package:    ${{ env.DOTNET_ROOT }}/myapp
+          app-name:       'cenfocinemas-jpastora'
+          resource-group: 'CENFOTEC'
+          slot-name:      'Production'
+          package:        ${{ env.DOTNET_ROOT }}/myapp
 
       - name: Deploy WebApp to Azure
         uses: azure/webapps-deploy@v3
         with:
-          app-name:   'cenfocinemas-jpastora-webapp'
-          slot-name:  'Production'
-          package:    ${{ env.DOTNET_ROOT }}/myapp-webapp
+          app-name:       'cenfocinemas-jpastora-webapp'
+          resource-group: 'CENFOTEC'
+          slot-name:      'Production'
+          package:        ${{ env.DOTNET_ROOT }}/myapp-webapp
