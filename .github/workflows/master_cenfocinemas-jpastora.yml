@@ -8,12 +8,17 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    permissions:
+      contents: read
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Setup .NET 8.x
         uses: actions/setup-dotnet@v4
-        with: dotnet-version: '8.x'
+        with:
+          dotnet-version: '8.x'
 
       - name: Restore & publish WebAPI
         run: |
@@ -25,12 +30,14 @@ jobs:
           dotnet restore WebApp/WebApp.csproj
           dotnet publish WebApp/WebApp.csproj -c Release -o publish/webapp
 
-      - name: Upload artifacts
+      - name: Upload WebAPI artifact
         uses: actions/upload-artifact@v4
         with:
           name: api-artifact
           path: publish/api
-      - uses: actions/upload-artifact@v4
+
+      - name: Upload WebApp artifact
+        uses: actions/upload-artifact@v4
         with:
           name: webapp-artifact
           path: publish/webapp
@@ -38,11 +45,22 @@ jobs:
   deploy:
     runs-on: windows-latest
     needs: build
+    permissions:
+      id-token: write
+      contents: read
+
     steps:
-      - uses: actions/download-artifact@v4
-        with: name: api-artifact; path: publish/api
-      - uses: actions/download-artifact@v4
-        with: name: webapp-artifact; path: publish/webapp
+      - name: Download WebAPI artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: api-artifact
+          path: publish/api
+
+      - name: Download WebApp artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: webapp-artifact
+          path: publish/webapp
 
       - name: Azure Login
         uses: azure/login@v2
