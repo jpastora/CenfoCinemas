@@ -1,4 +1,4 @@
-# .github/workflows/master_cenfocinemas-jpastora.yml
+# .github/workflows/master_cenfocinemas-jpastora.yml 
 
 name: Build and deploy ASP.Net Core apps to Azure
 
@@ -73,6 +73,9 @@ jobs:
           name: webapp-artifact
           path: webapp
 
+      - name: Inspect WebApp folder
+        run: ls -R webapp
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -83,11 +86,11 @@ jobs:
       - name: Deploy WebAPI to Azure
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'cenfocinemas-jpastora'        # App Service de la API
+          app-name: 'cenfocinemas-jpastora'
           package:  api
 
       - name: Deploy WebApp to Azure
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'cenfocinemas-jpastora-webapp' # App Service de la WebApp
+          app-name: 'cenfocinemas-jpastora-webapp'
           package:  webapp
