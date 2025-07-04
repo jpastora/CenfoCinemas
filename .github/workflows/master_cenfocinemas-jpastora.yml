@@ -2,7 +2,8 @@ name: Build and Deploy ASP.Net Core apps to Azure
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
   workflow_dispatch:
 
 jobs:
@@ -12,19 +13,20 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Setup .NET 8.x
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
 
-      - name: Restore & publish WebAPI
+      - name: Restore, build & publish WebAPI
         run: |
           dotnet restore WebAPI/WebAPI.csproj
           dotnet publish WebAPI/WebAPI.csproj -c Release -o publish/api
 
-      - name: Restore & publish WebApp
+      - name: Restore, build & publish WebApp
         run: |
           dotnet restore WebApp/WebApp.csproj
           dotnet publish WebApp/WebApp.csproj -c Release -o publish/webapp
@@ -64,24 +66,17 @@ jobs:
       - name: Azure Login
         uses: azure/login@v2
         with:
-          client-id:     ${{ secrets.AZUREAPPSERVICE_CLIENTID_C3DA96A9F73A43FC905DA70EC408261A }}
-          tenant-id:     ${{ secrets.AZUREAPPSERVICE_TENANTID_47C25DA6CEB1427A8FBE3F9A27688994 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_C3DA96A9F73A43FC905DA70EC408261A }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_47C25DA6CEB1427A8FBE3F9A27688994 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_2DD758E6C6FE4EDA86F1B4A5001E5CD5 }}
 
-      - name: Deploy WebAPI via CLI
-        shell: bash
-        run: |
-          az webapp deploy \
-            --resource-group CENFOTEC \
-            --name cenfocinemas-jpastora \
-            --src-path publish/api \
-            --type zip
+      - name: Deploy WebAPI to Azure
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: cenfocinemas-jpastora
+          slot-name: Production
+          package: publish/api
 
-      - name: Deploy WebApp via CLI
-        shell: bash
-        run: |
-          az webapp deploy \
-            --resource-group CENFOTEC \
-            --name cenfocinemas-jpastora-webapp \
-            --src-path publish/webapp \
-            --type zip
+      - name: Deploy WebApp to Azure
+        uses: azure/webapps-deploy@v3
+        with:
