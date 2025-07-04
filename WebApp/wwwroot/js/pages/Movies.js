@@ -14,6 +14,11 @@
             var vc = new MoviesViewController();
             vc.Create();
         });
+
+        //Prueba de copilot
+
+
+
         $('#btnUpdate').click(function () {
             var vc = new MoviesViewController();
             vc.Update();
