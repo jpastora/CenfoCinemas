@@ -1,18 +1,15 @@
-# .github/workflows/master_cenfocinemas-jpastora.yml
-
-name: Build and deploy ASP.Net Core app to Azure Web App - cenfocinemas-jpastora
+name: Build and deploy ASP.Net Core apps to Azure
 
 on:
   push:
-    branches:
-      - master
+    branches: [ master ]
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: windows-latest
     permissions:
-      contents: read # required for actions/checkout
+      contents: read
 
     steps:
       - name: Checkout repository
@@ -25,56 +22,57 @@ jobs:
 
       # --- WEB API ---
       - name: Build WEB API
-        run: dotnet build ./WebAPI/WebAPI.csproj --configuration Debug
+        run: dotnet build WebAPI/WebAPI.csproj --configuration Debug
 
-      - name: dotnet publish WEB API
-        run: dotnet publish ./WebAPI/WebAPI.csproj \
-              -c Debug \
-              -o "${{ env.DOTNET_ROOT }}/myapp"
+      - name: Publish WEB API
+        run: dotnet publish WebAPI/WebAPI.csproj \
+              --configuration Debug \
+              --output myapp
 
       # --- WEB APP ---
       - name: Build WebApp
-        run: dotnet build ./WebApp/WebApp.csproj --configuration Debug
+        run: dotnet build WebApp/WebApp.csproj --configuration Debug
 
-      - name: dotnet publish WebApp
-        run: dotnet publish ./WebApp/WebApp.csproj \
-              -c Debug \
-              -o "${{ env.DOTNET_ROOT }}/myapp-webapp"
+      - name: Publish WebApp
+        run: dotnet publish WebApp/WebApp.csproj \
+              --configuration Debug \
+              --output myapp-webapp
 
       # --- Upload artifacts ---
       - name: Upload WEB API artifact
         uses: actions/upload-artifact@v4
         with:
-          name: api-artifact
-          path: ${{ env.DOTNET_ROOT }}/myapp
+          name: webapi-artifact
+          path: myapp
 
-      - name: Upload WebApp artifact
+      - name: Upload WEB APP artifact
         uses: actions/upload-artifact@v4
         with:
           name: webapp-artifact
-          path: ${{ env.DOTNET_ROOT }}/myapp-webapp
+          path: myapp-webapp
 
   deploy:
     runs-on: windows-latest
     needs: build
-
     permissions:
-      id-token: write  # required for azure/login
+      id-token: write
       contents: read
 
     steps:
+      # Descarga de artefactos en carpetas separadas
       - name: Download WEB API artifact
         uses: actions/download-artifact@v4
         with:
-          name: api-artifact
-          path: ${{ env.DOTNET_ROOT }}/myapp
+          name: webapi-artifact
+          path: webapi
 
-      - name: Download WebApp artifact
+      - name: Download WEB APP artifact
         uses: actions/download-artifact@v4
         with:
           name: webapp-artifact
-          path: ${{ env.DOTNET_ROOT }}/myapp-webapp
+          path: webapp
 
+      # Autenticación en Azure
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -82,16 +80,16 @@ jobs:
           tenant-id:       ${{ secrets.AZUREAPPSERVICE_TENANTID_47C25DA6CEB1427A8FBE3F9A27688994 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_2DD758E6C6FE4EDA86F1B4A5001E5CD5 }}
 
+      # Despliegue de la API al App Service correcto
       - name: Deploy WEB API to Azure
         uses: azure/webapps-deploy@v3
         with:
-          app-name:   'cenfocinemas-jpastora'
-          slot-name:  'Production'
-          package:    ${{ env.DOTNET_ROOT }}/myapp
+          app-name: 'cenfocinemas-jpastora'
+          package:  webapi
 
+      # Despliegue de la WebApp al App Service correcto
       - name: Deploy WebApp to Azure
         uses: azure/webapps-deploy@v3
         with:
-          app-name:   'cenfocinemas-jpastora-webapp'
-          slot-name:  'Production'
-          package:    ${{ env.DOTNET_ROOT }}/myapp-webapp
+          app-name: 'cenfocinemas-jpastora-webapp'
+          package:  webapp
