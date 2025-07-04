@@ -73,9 +73,6 @@ jobs:
           name: webapp-artifact
           path: webapp
 
-      - name: Inspect WebApp folder
-        run: ls -R webapp
-
       - name: Login to Azure
         uses: azure/login@v2
         with:
