@@ -1,7 +1,4 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy ASP.Net Core app to Azure Web App - cenfocinemas-jpastora
+name: Build and Deploy ASP.Net Core apps to Azure
 
 on:
   push:
@@ -13,54 +10,73 @@ jobs:
   build:
     runs-on: windows-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Set up .NET Core
+      - name: Setup .NET 8.x
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
 
-      - name: Build WEB API
-        run: dotnet build ./WebAPI/WebAPI.csproj --configuration Debug
+      - name: Restore, build & publish WebAPI
+        run: |
+          dotnet restore WebAPI/WebAPI.csproj
+          dotnet publish WebAPI/WebAPI.csproj -c Release -o publish/api
 
-      - name: dotnet publish WEB API
-        run: dotnet publish ./WebAPI/WebAPI.csproj -c Debug -o "${{env.DOTNET_ROOT}}/myapp"
+      - name: Restore, build & publish WebApp
+        run: |
+          dotnet restore WebApp/WebApp.csproj
+          dotnet publish WebApp/WebApp.csproj -c Release -o publish/webapp
 
-      - name: Upload artifact for deployment job
+      - name: Upload WebAPI artifact
         uses: actions/upload-artifact@v4
         with:
-          name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          name: api-artifact
+          path: publish/api
+
+      - name: Upload WebApp artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: webapp-artifact
+          path: publish/webapp
 
   deploy:
     runs-on: windows-latest
     needs: build
-    
     permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
+      id-token: write
+      contents: read
 
     steps:
-      - name: Download artifact from build job
+      - name: Download WebAPI artifact
         uses: actions/download-artifact@v4
         with:
-          name: .net-app
-      
-      - name: Login to Azure
+          name: api-artifact
+          path: publish/api
+
+      - name: Download WebApp artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: webapp-artifact
+          path: publish/webapp
+
+      - name: Azure Login
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_C3DA96A9F73A43FC905DA70EC408261A }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_47C25DA6CEB1427A8FBE3F9A27688994 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_2DD758E6C6FE4EDA86F1B4A5001E5CD5 }}
 
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
+      - name: Deploy WebAPI to Azure
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'cenfocinemas-jpastora'
-          slot-name: 'Production'
-          package: .
-          
+          app-name: cenfocinemas-jpastora
+          slot-name: Production
+          package: publish/api
+
+      - name: Deploy WebApp to Azure
+        uses: azure/webapps-deploy@v3
+        with:
