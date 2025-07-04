@@ -28,18 +28,14 @@ jobs:
         run: dotnet build ./WebAPI/WebAPI.csproj --configuration Debug
 
       - name: dotnet publish WEB API
-        run: dotnet publish ./WebAPI/WebAPI.csproj \
-              -c Debug \
-              -o "${{ env.DOTNET_ROOT }}/myapp"
+        run: dotnet publish ./WebAPI/WebAPI.csproj -c Debug -o "${{ env.DOTNET_ROOT }}/myapp"
 
       # --- WEB APP ---
       - name: Build WebApp
         run: dotnet build ./WebApp/WebApp.csproj --configuration Debug
 
       - name: dotnet publish WebApp
-        run: dotnet publish ./WebApp/WebApp.csproj \
-              -c Debug \
-              -o "${{ env.DOTNET_ROOT }}/myapp-webapp"
+        run: dotnet publish ./WebApp/WebApp.csproj -c Debug -o "${{ env.DOTNET_ROOT }}/myapp-webapp"
 
       # --- Upload artifacts ---
       - name: Upload WEB API artifact
