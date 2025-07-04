@@ -84,7 +84,7 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name:       'cenfocinemas-jpastora'
-          resource-group: 'CENFOTEC'
+          resource-group-name: 'CENFOTEC'
           slot-name:      'Production'
           package:        ${{ env.DOTNET_ROOT }}/myapp
 
@@ -92,6 +92,6 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name:       'cenfocinemas-jpastora-webapp'
-          resource-group: 'CENFOTEC'
+          resource-group-name: 'CENFOTEC'
           slot-name:      'Production'
           package:        ${{ env.DOTNET_ROOT }}/myapp-webapp
