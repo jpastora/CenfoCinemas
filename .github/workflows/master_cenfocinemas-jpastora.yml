@@ -12,8 +12,7 @@ jobs:
       contents: read
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup .NET 8.x
         uses: actions/setup-dotnet@v4
@@ -70,6 +69,7 @@ jobs:
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_2DD758E6C6FE4EDA86F1B4A5001E5CD5 }}
 
       - name: Deploy WebAPI via CLI
+        shell: bash
         run: |
           az webapp deploy \
             --resource-group CENFOTEC \
@@ -78,6 +78,7 @@ jobs:
             --type zip
 
       - name: Deploy WebApp via CLI
+        shell: bash
         run: |
           az webapp deploy \
             --resource-group CENFOTEC \
