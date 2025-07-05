@@ -14,11 +14,6 @@
             var vc = new MoviesViewController();
             vc.Create();
         });
-
-        //Prueba de copilot
-
-
-
         $('#btnUpdate').click(function () {
             var vc = new MoviesViewController();
             vc.Update();
@@ -26,6 +21,10 @@
         $('#btnDelete').click(function () {
             var vc = new MoviesViewController();
             vc.Delete();
+        });
+        $('#btnRetrieveById').click(function () {
+            var vc = new MoviesViewController();
+            vc.RetrieveById();
         });
     }
 
@@ -99,6 +98,28 @@
             $('#txtReleaseDate').val(onlyDate[0]); // Formato YYYY-MM-DD
         });
     }
+
+    this.RetrieveById = function () {
+
+        var id = $('#txtId').val();
+
+        var ca = new ControlActions();
+        var service = this.ApiEndpointName + '/RetrieveById?id=' + encodeURIComponent(id);
+
+        ca.GetToApi(service, function (result) {
+            var movie = result;
+
+            // Asignar los valores al formulario
+            $('#txtTitle').val(movie.title);
+            $('#txtDescription').val(movie.description);
+            $('#txtGenre').val(movie.genre);
+            $('#txtDirector').val(movie.director);
+            // Convertir la fecha a un formato legible
+            var onlyDate = movie.releaseDate.split("T");
+            $('#txtReleaseDate').val(onlyDate[0]); 
+        });
+    };  
+
     this.Create = function () {
 
         var movieDto = {};

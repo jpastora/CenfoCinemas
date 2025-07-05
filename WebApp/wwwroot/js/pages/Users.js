@@ -26,6 +26,10 @@ function UsersViewController() {
             var vc = new UsersViewController();
             vc.Delete();
         });
+        $('#btnRetrieveById').click(function () {
+            var vc = new UsersViewController();
+            vc.RetrieveById();
+        });
 
     }
 
@@ -102,6 +106,34 @@ function UsersViewController() {
             $('#txtBirthDate').val(onlyDate[0]);
         });
     }
+
+    this.RetrieveById = function () {
+
+        var id = $('#txtId').val();
+
+        var ca = new ControlActions();
+        var service = this.ApiEndpointName + '/RetrieveById?id=' + encodeURIComponent(id);
+
+        ca.GetToApi(service, function (result) {
+            var user = result;
+
+            $('#txtUserCode').val(user.userCode);
+            $('#txtName').val(user.name);
+            $('#txtEmail').val(user.email);
+            $('#txtPassword').val(user.password);
+
+            var onlyDate = user.birthDate ? user.birthDate.split('T')[0] : '';
+            $('#txtBirthDate').val(onlyDate);
+
+            $('#txtStatus').val(user.status);
+
+        });
+    };
+
+
+
+
+
     this.Create = function () {
 
         var userDto = {};
