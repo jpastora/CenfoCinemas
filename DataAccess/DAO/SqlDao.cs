@@ -30,7 +30,7 @@ namespace DataAccess.DAO
         private SqlDao()
         {
             // Aquí puedes inicializar la cadena de conexión
-            _connectionString = @"Data Source=srv-sqldatabase-dbjpastora1.database.windows.net;Initial Catalog=cenfocinameas-db;Persist Security Info=True;User ID=sysman;Password=Cenfortec123!;Trust Server Certificate=True"; // Reemplaza con tu cadena de conexión real
+            _connectionString = @"Data Source=srv-sqldatabase-dbjpastora1.database.windows.net;Initial Catalog=cenfocinameas-db;Persist Security Info=True;User ID=sysman;Password=Cenfortec12345!;Trust Server Certificate=True"; // Reemplaza con tu cadena de conexión real
         }
 
         // Paso 3: Crear un método público estático para obtener la instancia
